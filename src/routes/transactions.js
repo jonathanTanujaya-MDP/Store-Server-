@@ -5,30 +5,60 @@ const pool = require('../config/db');
 // Get all transactions (combined from sales and restock)
 router.get('/', async (req, res) => {
   try {
-    // Get sales transactions
+    // Get sales transactions with items
     const salesQuery = `
       SELECT 
         'SALE' as transaction_type,
-        sales_id as transaction_id,
-        customer_name,
-        total_amount,
-        total_profit,
-        transaction_date,
-        notes
-      FROM sales_transactions
+        st.sales_id as transaction_id,
+        st.customer_name,
+        st.total_amount,
+        st.total_profit,
+        st.transaction_date,
+        st.notes,
+        COALESCE(
+          JSON_AGG(
+            JSON_BUILD_OBJECT(
+              'product_name', p.name,
+              'quantity', si.quantity,
+              'unit_price', si.unit_price,
+              'subtotal', si.subtotal,
+              'product_id', si.product_id
+            ) ORDER BY si.sales_item_id
+          ) FILTER (WHERE si.sales_item_id IS NOT NULL),
+          '[]'::json
+        ) as items
+      FROM sales_transactions st
+      LEFT JOIN sales_items si ON st.sales_id = si.sales_id
+      LEFT JOIN products p ON si.product_id = p.id
+      GROUP BY st.sales_id, st.customer_name, st.total_amount, st.total_profit, st.transaction_date, st.notes
     `;
     
-    // Get restock transactions
+    // Get restock transactions with items
     const restockQuery = `
       SELECT 
         'RESTOCK' as transaction_type,
-        restock_id as transaction_id,
-        supplier_name as customer_name,
-        total_cost as total_amount,
+        rt.restock_id as transaction_id,
+        rt.supplier_name as customer_name,
+        rt.total_cost as total_amount,
         0 as total_profit,
-        restock_date as transaction_date,
-        notes
-      FROM restock_transactions
+        rt.restock_date as transaction_date,
+        rt.notes,
+        COALESCE(
+          JSON_AGG(
+            JSON_BUILD_OBJECT(
+              'product_name', p.name,
+              'quantity', ri.quantity,
+              'unit_price', ri.unit_cost,
+              'subtotal', ri.subtotal,
+              'product_id', ri.product_id
+            ) ORDER BY ri.restock_item_id
+          ) FILTER (WHERE ri.restock_item_id IS NOT NULL),
+          '[]'::json
+        ) as items
+      FROM restock_transactions rt
+      LEFT JOIN restock_items ri ON rt.restock_id = ri.restock_id
+      LEFT JOIN products p ON ri.product_id = p.id
+      GROUP BY rt.restock_id, rt.supplier_name, rt.total_cost, rt.restock_date, rt.notes
     `;
     
     // Combine both queries
