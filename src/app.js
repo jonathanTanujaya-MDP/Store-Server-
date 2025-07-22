@@ -30,9 +30,11 @@ app.use(standardRateLimit);
 // CORS middleware
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
-    ? ['https://your-frontend-domain.com'] // Update dengan domain frontend kamu
-    : true, // Allow all origins in development
-  credentials: true
+    ? ['https://your-frontend-domain.com', 'http://localhost:5173', 'http://localhost:3000'] 
+    : ['http://localhost:5173', 'http://localhost:3000', 'http://127.0.0.1:5173'], // Allow development origins
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 
 // Body parser middleware
