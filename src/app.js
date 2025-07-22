@@ -27,15 +27,23 @@ app.set('trust proxy', 1);
 // Rate limiting for all endpoints
 app.use(standardRateLimit);
 
-// CORS middleware
-app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? ['https://your-frontend-domain.com', 'http://localhost:5173', 'http://localhost:3000'] 
-    : ['http://localhost:5173', 'http://localhost:3000', 'http://127.0.0.1:5173'], // Allow development origins
+// CORS middleware - Production ready
+const corsOptions = {
+  origin: [
+    'https://store-omega-livid.vercel.app',
+    'https://*.vercel.app'
+  ],
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
-}));
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+  exposedHeaders: ['Authorization'],
+  optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
+
+// Explicit handling for preflight requests
+app.options('*', cors(corsOptions));
 
 // Body parser middleware
 app.use(express.json({ limit: '10mb' }));

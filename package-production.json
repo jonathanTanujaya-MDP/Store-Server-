@@ -1,0 +1,28 @@
+{
+  "name": "manajemen-stock-backend",
+  "version": "2.0.0",
+  "description": "Backend API for Stock Management System",
+  "main": "src/app-production.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "debug": "node src/server-simple.js",
+    "production": "node src/server-production.js",
+    "vercel": "node src/app-production.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": ["stock", "management", "api", "express"],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.0.0",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
