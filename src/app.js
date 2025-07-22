@@ -29,15 +29,43 @@ app.use(standardRateLimit);
 
 // CORS middleware - Production ready
 const corsOptions = {
-  origin: [
-    'https://store-omega-livid.vercel.app',
-    'https://*.vercel.app'
-  ],
+  origin: function (origin, callback) {
+    // Allow requests from Vercel domains and localhost for development
+    const allowedOrigins = [
+      'https://store-omega-livid.vercel.app',
+      'https://store-omega-livid-git-main-username.vercel.app',
+      /^https:\/\/.*\.vercel\.app$/,
+      'http://localhost:5173',
+      'http://localhost:3000',
+      'http://127.0.0.1:5173'
+    ];
+    
+    // Allow requests with no origin (mobile apps, Postman, etc.)
+    if (!origin) return callback(null, true);
+    
+    const isAllowed = allowedOrigins.some(allowedOrigin => {
+      if (typeof allowedOrigin === 'string') {
+        return origin === allowedOrigin;
+      }
+      if (allowedOrigin instanceof RegExp) {
+        return allowedOrigin.test(origin);
+      }
+      return false;
+    });
+    
+    if (isAllowed) {
+      callback(null, true);
+    } else {
+      console.log('CORS blocked origin:', origin);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
   exposedHeaders: ['Authorization'],
-  optionsSuccessStatus: 200
+  optionsSuccessStatus: 200,
+  preflightContinue: false
 };
 
 app.use(cors(corsOptions));
