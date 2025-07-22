@@ -3,21 +3,21 @@
   "name": "manajemen-stock-backend",
   "builds": [
     {
-      "src": "src/app-simple.js",
+      "src": "src/server-pure.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "src/app-simple.js"
+      "dest": "src/server-pure.js"
     }
   ],
   "env": {
     "NODE_ENV": "production"
   },
   "functions": {
-    "src/app-simple.js": {
+    "src/server-pure.js": {
       "maxDuration": 10
     }
   }
