@@ -9,11 +9,13 @@ app.use(cors());
 app.use(express.json());
 
 // Routes - SEPARATED FOR BETTER ORGANIZATION
+const authRoutes = require('./routes/auth'); // NEW: Authentication routes
 const productsRoutes = require('./routes/products');
 const salesRoutes = require('./routes/sales'); // NEW: Sales transactions
 const restockRoutes = require('./routes/restock'); // NEW: Restock transactions
 const transactionsRoutes = require('./routes/transactions'); // Keep for backward compatibility
 
+app.use('/api/auth', authRoutes); // NEW: Handle authentication
 app.use('/api/products', productsRoutes);
 app.use('/api/sales', salesRoutes); // NEW: Handle sales transactions
 app.use('/api/restock', restockRoutes); // NEW: Handle restock transactions
@@ -24,6 +26,7 @@ app.get('/', (req, res) => {
   res.json({ 
     message: 'Manajemen Stok API is running!',
     endpoints: {
+      auth: '/api/auth',
       products: '/api/products',
       sales: '/api/sales',
       restock: '/api/restock',
