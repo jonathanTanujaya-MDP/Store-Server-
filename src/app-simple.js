@@ -14,12 +14,13 @@ app.use(helmet({
 // Trust proxy
 app.set('trust proxy', 1);
 
-// Production CORS configuration for Vercel
+// Development CORS configuration for localhost
 app.use(cors({
   origin: [
-    'https://store-omega-livid.vercel.app',
-    'https://*.vercel.app', // Allow all Vercel subdomains
-    'https://vercel.app'
+    'http://localhost:5173', // Vite dev server
+    'http://localhost:3000', // React dev server
+    'http://127.0.0.1:5173',
+    'http://127.0.0.1:3000'
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],

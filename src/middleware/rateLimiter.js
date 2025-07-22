@@ -12,10 +12,10 @@ class ProgressiveRateLimit {
   }
 
   getWaitTime(attemptCount) {
-    if (attemptCount <= 2) return 0; // No wait for first 2 attempts
-    if (attemptCount === 3) return 30 * 1000; // 30 seconds
-    if (attemptCount === 4) return 2 * 60 * 1000; // 2 minutes
-    return 5 * 60 * 1000; // 5 minutes for 5+ attempts
+    if (attemptCount <= 5) return 0; // No wait for first 5 attempts (better for account switching)
+    if (attemptCount === 6) return 10 * 1000; // 10 seconds
+    if (attemptCount === 7) return 30 * 1000; // 30 seconds
+    return 60 * 1000; // 1 minute for 8+ attempts
   }
 
   middleware() {

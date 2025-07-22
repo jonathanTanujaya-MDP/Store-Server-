@@ -27,7 +27,7 @@ router.post('/login', progressiveRateLimit, validateLogin, (req, res) => {
         },
         process.env.JWT_SECRET,
         { 
-          expiresIn: process.env.JWT_EXPIRES_IN || '24h',
+          expiresIn: process.env.JWT_EXPIRES_IN || '7d', // Extended to 7 days for easier account switching
           issuer: 'manajemen-stock-api'
         }
       );

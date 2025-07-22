@@ -7,7 +7,7 @@ const { validateProduct, validateId } = require('../middleware/validation');
 // Get all products (accessible by both admin and owner)
 router.get('/', authenticateToken, async (req, res) => {
   try {
-    let query = 'SELECT id, name, category, selling_price, stock_quantity';
+    let query = 'SELECT id, name, category, selling_price, stock_quantity, minimum_stock';
     
     // Only owner can see purchase price (sensitive data)
     if (req.user.role === 'owner') {
@@ -36,7 +36,7 @@ router.get('/:id', authenticateToken, validateId, async (req, res) => {
   try {
     const { id } = req.params;
     
-    let query = 'SELECT id, name, category, selling_price, stock_quantity';
+    let query = 'SELECT id, name, category, selling_price, stock_quantity, minimum_stock';
     
     // Only owner can see purchase price
     if (req.user.role === 'owner') {
